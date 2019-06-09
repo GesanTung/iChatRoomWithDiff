@@ -81,6 +81,6 @@ class ChatDataController {
                                 ChatMessage(userName: "iOSer", msgContent: "WWDC 2019 好多惊喜"),
                                 ChatMessage(userName: "老峰", msgContent: "WWDC 2019 好多惊喜"),
                                 ChatMessage(userName: "iOSer", msgContent: "WWDC 2019 好多惊喜"),
-                                ChatMessage(userName: "老峰", msgContent: "WWDC 2019 好多惊喜")
+                                ChatMessage(userName: "老峰", msgContent: "WWDC 2019 好多惊喜，不是吗")
     ]
 }
