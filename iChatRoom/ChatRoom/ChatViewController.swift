@@ -13,8 +13,8 @@ class ChatViewController: UIViewController {
     let tableView = UITableView(frame: .zero, style: .insetGrouped)
     var dataSource: UITableViewDiffableDataSource<ChatSection, ChatMessage>?
     var currentSnapshot = NSDiffableDataSourceSnapshot<ChatSection, ChatMessage>()
-    var chatController: ChatDataController?
-    
+    var chatController = ChatDataController()
+    var hodler: Any?
     static let reuseIdentifier = "reuse-identifier"
 
     override func viewDidLoad() {
@@ -41,7 +41,8 @@ extension ChatViewController {
     }
     
     func configureDataSource() {
-        chatController = ChatDataController { [weak self] (controller: ChatDataController) in
+        
+        hodler = chatController.didChange.sink { [weak self] value in
             guard let self = self else { return }
             self.updateUI()
         }
@@ -63,19 +64,16 @@ extension ChatViewController {
     }
     
     func updateUI(animated: Bool = true) {
-        guard let chatcontroller = self.chatController else { return }
         
         currentSnapshot = NSDiffableDataSourceSnapshot<ChatSection, ChatMessage>()
         
-        let items = chatcontroller.displayMsg
+        let items = chatController.displayMsg
         currentSnapshot.appendSections([.socket])
         currentSnapshot.appendItems(items, toSection: .socket)
         
         self.dataSource?.apply(currentSnapshot, animatingDifferences: animated)
         self.tableView.scrollToRow(at: IndexPath.init(row: currentSnapshot.numberOfItems(inSection: .socket) - 1, section: 0), at: .bottom, animated: true)
     }
-
-    
 }
 
 

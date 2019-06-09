@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 
 enum ChatSection: CaseIterable {
     case history, socket
@@ -37,12 +38,14 @@ class ChatDataController {
     
     private let updateInterval = 100
     
-    private let updateHandler: UpdateHandler
+    let didChange: AnyPublisher<[ChatMessage], Never>
+    
+    let _didChange = PassthroughSubject<[ChatMessage], Never>()
     
     var displayMsg: [ChatMessage] = [ChatMessage]()
     
-    init(updateHandler: @escaping UpdateHandler) {
-        self.updateHandler = updateHandler
+    init() {
+        self.didChange = _didChange.eraseToAnyPublisher()
         mockRandomMsgUpdate()
     }
     
@@ -56,8 +59,7 @@ class ChatDataController {
         let item = ChatMessage(userName: msg.userName, msgContent: msg.msgContent)
         
         displayMsg.append(item)
-        
-        updateHandler(self)
+        _didChange.send(displayMsg)
         
         let deadline = DispatchTime.now() + DispatchTimeInterval.milliseconds(updateInterval * newIndex)
         DispatchQueue.main.asyncAfter(deadline: deadline) {
